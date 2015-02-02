@@ -2,5 +2,8 @@
   "name": "breakout",
   "version": "0.0.0",
   "authors": [],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "physicsjs": "~0.7.0"
+  }
 }
