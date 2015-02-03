@@ -29,7 +29,9 @@ Physics(function (world) {
     y: 30,
     vx: 0.4,
     vy: 0.4,
-    radius: 10
+    radius: 10,
+    restitution: 1,
+    cof: 0
   });
   world.add(ball);
 
