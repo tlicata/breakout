@@ -4,6 +4,7 @@ Physics(function (world) {
 
   var viewWidth = 500;
   var viewHeight = 300;
+  var started = false;
 
   var renderer = Physics.renderer("canvas", {
     el: "game",
@@ -24,17 +25,6 @@ Physics(function (world) {
   });
   world.add(renderer);
 
-  var ball = Physics.body("circle", {
-    x: 50,
-    y: 30,
-    vx: 0.4,
-    vy: 0.4,
-    radius: 10,
-    restitution: 1,
-    cof: 0
-  });
-  world.add(ball);
-
   var paddleHeight = 10;
   var paddleWidth = 60;
   var paddle = Physics.body("rectangle", {
@@ -45,6 +35,16 @@ Physics(function (world) {
     treatment: "static"
   });
   world.add(paddle);
+
+  var ballRadius = 10;
+  var ball = Physics.body("circle", {
+    x: paddle.state.pos.x,
+    y: paddle.state.pos.y - ballRadius,
+    radius: ballRadius,
+    restitution: 1,
+    cof: 0
+  });
+  world.add(ball);
 
   var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight + 200);
   world.add(Physics.behavior("edge-collision-detection", {
@@ -67,10 +67,26 @@ Physics(function (world) {
 
   window.addEventListener("keydown", function (event) {
     var pos = paddle.state.pos;
+    var ballPos = ball.state.pos;
+    var moveBy;
     if (event.keyCode === 37) {
-      pos.set(Math.max(paddleWidth / 2, pos.x - 20), pos.y);
+      moveBy = pos.x - Math.max(paddleWidth / 2, pos.x - 20);
+      pos.set(pos.x - moveBy, pos.y);
+      if (!started) {
+        ballPos.set(ballPos.x - moveBy, ballPos.y);
+      }
     } else if (event.keyCode === 39) {
-      pos.set(Math.min(viewWidth - (paddleWidth/2), pos.x + 20), pos.y);
+      moveBy = Math.min(viewWidth - (paddleWidth/2), pos.x + 20) - pos.x;
+      pos.set(pos.x + moveBy, pos.y);
+      if (!started) {
+        ballPos.set(ballPos.x + moveBy, ballPos.y);
+      }
+    } else if (event.keyCode === 13) {
+      if (!started) {
+        started = true;
+        ball.state.vel.set(0.2, -0.2);
+        ball.sleep(false);
+      }
     }
   });
 });
