@@ -1,0 +1,17 @@
+body {
+    background: black;
+    color: purple;
+    font-family: Verdana;
+    font-weight: bold;
+}
+
+p {
+    text-align: center;
+}
+
+#game {
+    margin: 0 auto;
+    height: 300px;
+    width: 500px;
+    border: 1px solid #ccc;
+}
