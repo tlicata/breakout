@@ -25,8 +25,8 @@ Physics(function (world) {
   var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
   world.add(Physics.behavior("edge-collision-detection", {
     aabb: viewportBounds,
-    restitution: 0.99,
-    cof: 0.99
+    restitution: 1,
+    cof: 0
   }));
   world.add(Physics.behavior("body-impulse-response"));
 
