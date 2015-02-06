@@ -13,5 +13,5 @@ Run locally
 
 - `npm install`
 - `bower install`
-- `npm run bundle` or `npm run watch`
+- `npm run bundle` or `npm run watch` or `npm run minify`
 - `open index.html`
