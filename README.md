@@ -8,8 +8,6 @@ The `gh-pages` branch contains the code used for rendering
 [http://tlicata.github.io/breakout/](http://tlicata.github.io/breakout/)
 .
 
-See [GitHub Pages](https://pages.github.com/) for documentation.
-
 Run locally
 -----------
 
