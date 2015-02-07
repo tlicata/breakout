@@ -5,6 +5,8 @@ Physics(function (world) {
   var viewWidth = 500;
   var viewHeight = 300;
   var started = false;
+  var rightKeyDown = false;
+  var leftKeyDown = false;
 
   var renderer = Physics.renderer("canvas", {
     el: "game",
@@ -57,6 +59,26 @@ Physics(function (world) {
   world.add(Physics.behavior("sweep-prune"));
 
   world.on("step", function(){
+    var rightLimit = viewWidth - paddleWidth/2;
+    var leftLimit = paddleWidth / 2;
+    var paddlePos = paddle.state.pos;
+    var ballPos = ball.state.pos;
+    var dist = 0;
+    if (leftKeyDown && !rightKeyDown) {
+      dist = -5;
+    } else if (rightKeyDown && !leftKeyDown) {
+      dist = 5;
+    }
+    if (paddlePos.x + dist > rightLimit) {
+      dist = rightLimit - paddlePos.x;
+    } else if (paddlePos.x + dist < leftLimit) {
+      dist = paddlePos.x - leftLimit;
+    }
+    paddlePos.set(paddlePos.x + dist, paddlePos.y);
+    if (!started) {
+      ballPos.set(ballPos.x + dist, ballPos.y);
+      ball.sleep(true);
+    }
     world.render();
   });
 
@@ -65,22 +87,18 @@ Physics(function (world) {
   });
   Physics.util.ticker.start();
 
-  window.addEventListener("keydown", function (event) {
-    var pos = paddle.state.pos;
-    var ballPos = ball.state.pos;
-    var moveBy;
+  window.addEventListener("keyup", function (event) {
     if (event.keyCode === 37) {
-      moveBy = pos.x - Math.max(paddleWidth / 2, pos.x - 20);
-      pos.set(pos.x - moveBy, pos.y);
-      if (!started) {
-        ballPos.set(ballPos.x - moveBy, ballPos.y);
-      }
+      leftKeyDown = false;
     } else if (event.keyCode === 39) {
-      moveBy = Math.min(viewWidth - (paddleWidth/2), pos.x + 20) - pos.x;
-      pos.set(pos.x + moveBy, pos.y);
-      if (!started) {
-        ballPos.set(ballPos.x + moveBy, ballPos.y);
-      }
+      rightKeyDown = false;
+    }
+  });
+  window.addEventListener("keydown", function (event) {
+    if (event.keyCode === 37) {
+      leftKeyDown = true;
+    } else if (event.keyCode === 39) {
+      rightKeyDown = true;
     } else if (event.keyCode === 13) {
       if (!started) {
         started = true;
