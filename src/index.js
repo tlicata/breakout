@@ -25,8 +25,8 @@ Physics(function (world) {
   });
   world.add(renderer);
 
-  var paddleHeight = 10;
-  var paddleWidth = 60;
+  var paddleHeight = 8;
+  var paddleWidth = 50;
   var paddle = Physics.body("rectangle", {
     x: (viewWidth/2),
     y: viewHeight - paddleHeight - 5,
@@ -36,7 +36,7 @@ Physics(function (world) {
   });
   world.add(paddle);
 
-  var ballRadius = 10;
+  var ballRadius = 7;
   var ball = Physics.body("circle", {
     x: paddle.state.pos.x,
     y: paddle.state.pos.y - ballRadius,
