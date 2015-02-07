@@ -78,6 +78,12 @@ Physics(function (world) {
     if (!started) {
       ballPos.set(ballPos.x + dist, ballPos.y);
       ball.sleep(true);
+    } else if (ballPos.y > viewHeight) {
+      started = false;
+      var middle = viewWidth / 2;
+      paddlePos.set(middle, paddlePos.y);
+      ballPos.set(middle, paddlePos.y - ballRadius);
+      ball.state.vel.set(0, 0);
     }
     world.render();
   });
