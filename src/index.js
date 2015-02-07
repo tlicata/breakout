@@ -48,7 +48,8 @@ Physics(function (world) {
   });
   world.add(ball);
 
-  var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight + 200);
+  var boundsBuffer = 500;
+  var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight + boundsBuffer);
   world.add(Physics.behavior("edge-collision-detection", {
     aabb: viewportBounds,
     restitution: 1,
@@ -78,7 +79,7 @@ Physics(function (world) {
     if (!started) {
       ballPos.set(ballPos.x + dist, ballPos.y);
       ball.sleep(true);
-    } else if (ballPos.y > viewHeight) {
+    } else if (ballPos.y > viewHeight + boundsBuffer/2) {
       started = false;
       var middle = viewWidth / 2;
       paddlePos.set(middle, paddlePos.y);
