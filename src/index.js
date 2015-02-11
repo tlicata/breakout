@@ -41,12 +41,32 @@ Physics(function (world) {
   var ballRadius = 7;
   var ball = Physics.body("circle", {
     x: paddle.state.pos.x,
-    y: paddle.state.pos.y - ballRadius,
+    y: paddle.state.pos.y - ballRadius - 5,
     radius: ballRadius,
     restitution: 1,
     cof: 0
   });
   world.add(ball);
+
+  var addBricks = function () {
+    var bricks = [];
+    var brickWidth = 45;
+    var spaceBetween = 15;
+    for (var i = 0; i < 7; i++) {
+      var singleBrick = Physics.body("rectangle", {
+        x: 70 + (brickWidth + spaceBetween) * i,
+        y: 50,
+        width: brickWidth,
+        height: 20,
+        treatment: "static",
+        typeOfObj: "brick"
+      });
+      singleBrick.sleep(true);
+      bricks.push(singleBrick);
+    }
+    world.add(bricks);
+  };
+  addBricks();
 
   var boundsBuffer = 500;
   var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight + boundsBuffer);
@@ -58,6 +78,16 @@ Physics(function (world) {
   world.add(Physics.behavior("body-impulse-response"));
   world.add(Physics.behavior("body-collision-detection"));
   world.add(Physics.behavior("sweep-prune"));
+
+  var reset = function () {
+    var paddlePos = paddle.state.pos;
+    var ballPos = ball.state.pos;
+    var middle = viewWidth / 2;
+    started = false;
+    paddlePos.set(middle, paddlePos.y);
+    ballPos.set(middle, paddlePos.y - ballRadius - 5);
+    ball.state.vel.set(0, 0);
+  };
 
   world.on("step", function(){
     var rightLimit = viewWidth - paddleWidth/2;
@@ -80,13 +110,26 @@ Physics(function (world) {
       ballPos.set(ballPos.x + dist, ballPos.y);
       ball.sleep(true);
     } else if (ballPos.y > viewHeight + boundsBuffer/2) {
-      started = false;
-      var middle = viewWidth / 2;
-      paddlePos.set(middle, paddlePos.y);
-      ballPos.set(middle, paddlePos.y - ballRadius);
-      ball.state.vel.set(0, 0);
+      reset();
     }
     world.render();
+  });
+
+  world.on("collisions:detected", function (data) {
+    data.collisions.forEach(function (impact) {
+      var a = impact.bodyA;
+      var b = impact.bodyB;
+      var toRemove = (a.typeOfObj === "brick") ? a : null;
+      toRemove = toRemove || (b.typeOfObj === "brick" ? b : null);
+      if (toRemove) {
+        world.removeBody(toRemove);
+        if (world.getBodies().length <= 2) {
+          alert("you won");
+          reset();
+          addBricks();
+        }
+      }
+    });
   });
 
   Physics.util.ticker.on(function (time) {
